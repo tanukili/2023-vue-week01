@@ -13,17 +13,64 @@
     />
   </head>
   <body>
-    <div id="app">{{ message }}</div>
-    <div class="card" style="width: 18rem">
-      <img src="..." class="card-img-top" alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">Card title</h5>
-        <p class="card-text">
-          Some quick example text to build on the card title and make up the
-          bulk of the card's content.
-        </p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+    <!-- CSS -->
+    <style>
+      /* 圖片置中填滿、寬度等同於外層容器 */
+      img {
+        object-fit: contain;
+        max-width: 100%;
+      }
+    </style>
+    <!-- HTML -->
+    <div id="app">
+      <div class="container my-3">
+        <div class="row">
+          <div class="col-md">
+            <h2>產品列表</h2>
+            <table class="table table-hover table-borderless mt-4 mb-3">
+              <thead>
+                <tr class="border-bottom">
+                  <th scope="col">產品名稱</th>
+                  <th scope="col">原價</th>
+                  <th scope="col">售價</th>
+                  <th scope="col">是否啟用</th>
+                  <th scope="col">查看細節</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-bottom">
+                  <th scope="row"><h3 class="fs-6 fw-normal lh-base">name</h3></th>
+                  <td>200</td>
+                  <td>100</td>
+                  <td><span class="text-success">啟用</span></td>
+                  <td><button class="btn btn-primary" type="button">查看細節</button></td>
+                </tr>
+              </tbody>
+            </table>
+            <p>目前有 3 項產品</p>
+          </div>
+          <div class="col-md">
+            <h2>單一產品細節</h2>
+            <div class="card mb-3">
+              <img src="https://images.unsplash.com/photo-1505253149613-112d21d9f6a9?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NDZ8fGNha2V8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60" alt="" style="height: 300px;">
+              <div class="card-body">
+                <h3 class="card-title fs-5">name<span class="badge bg-primary ms-2">categet</span></h3>
+                <p class="card-text">商品描述：Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, distinctio.</p>
+                <p class="card-text me-2">商品內容：尺寸：6寸</p>
+                <!-- 可以使用 del 標籤 -->
+                <p class="card-text"><span class="me-2">900</span><del class="text-secondary">1000</del>元 / 個 </p>
+              </div>
+            </div>
+            <div class="d-flex flex-wrap">
+              <span class="m-2">
+                <img src="https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2832&q=80" style="height: 150px;" alt="" >
+              </span>
+            </div>
+            <p class="text-secondary">請選擇一個商品查看</p>
+          </div>
+        </div>
       </div>
+    </div>
     </div>
 
     <script
