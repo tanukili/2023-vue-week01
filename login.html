@@ -79,7 +79,7 @@
                 // 儲存登入狀態
                 const { token, expired } = res.data;
                 document.cookie = `adminToken=${token}; expires=${new Date(expired)};`;
-                window.location.assign('/products.html');
+                window.location = 'products.html';
               })
               .catch(err => {
                 alert(err.response.data.message);
@@ -92,4 +92,3 @@
     </script>
   </body>
 </html>
-
