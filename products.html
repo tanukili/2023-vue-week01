@@ -39,11 +39,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr
-                  class="border-bottom"
-                  v-for="product in products"
-                  :key="product.id"
-                >
+                <tr class="border-bottom" v-for="product in products" :key="product.id">
                   <th scope="row">
                     <h3 class="fs-6 fw-normal lh-base">{{ product.title }}</h3>
                   </th>
@@ -56,11 +52,7 @@
                     >
                   </td>
                   <td>
-                    <button
-                      class="btn btn-primary"
-                      type="button"
-                      @click="showDetail(product.id)"
-                    >
+                    <button class="btn btn-primary" type="button" @click="showDetail(product.id)">
                       查看細節
                     </button>
                   </td>
@@ -73,34 +65,23 @@
             <h2>單一產品細節</h2>
             <div v-if="temp">
               <div class="card mb-3">
-                <img
-                  :src="temp.imageUrl"
-                  :alt="temp.title"
-                  style="height: 300px"
-                />
+                <img :src="temp.imageUrl" :alt="temp.title" style="height: 300px" />
                 <div class="card-body">
                   <h3 class="card-title fs-5">
-                    {{ temp.title }}<span class="badge bg-primary ms-2"
-                      >{{ temp.category }}</span
-                    >
+                    {{ temp.title }}<span class="badge bg-primary ms-2">{{ temp.category }}</span>
                   </h3>
                   <p class="card-text">商品描述：{{ temp.description }}</p>
                   <p class="card-text me-2">商品內容：{{ temp.content }}</p>
                   <!-- 可以使用 del 標籤 -->
                   <p class="card-text">
                     <span class="me-2">{{ temp.price }}</span
-                    ><del class="text-secondary">{{ temp.origin_price }}</del>元
-                    / 個
+                    ><del class="text-secondary">{{ temp.origin_price }}</del>元 / 個
                   </p>
                 </div>
               </div>
               <div class="d-flex flex-wrap">
                 <span class="m-2" v-for="(img, i) in temp.imagesUrl" :key="i">
-                  <img
-                    :src="img"
-                    style="height: 150px"
-                    :alt="`${temp.title}0${i+1}`"
-                  />
+                  <img :src="img" style="height: 150px" :alt="`${temp.title}0${i+1}`" />
                 </span>
               </div>
             </div>
@@ -121,6 +102,11 @@
       // 載入方式：ESM
       import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
+      const token = document.cookie.replace(
+        /(?:(?:^|.*;\s*)adminToken\s*\=\s*([^;]*).*$)|^.*$/,
+        '$1'
+      );
+
       const app = {
         data() {
           return {
@@ -129,8 +115,7 @@
               {
                 category: '甜甜圈',
                 content: '尺寸：14x14cm',
-                description:
-                  '濃郁的草莓風味，中心填入滑順不膩口的卡士達內餡，帶來滿滿幸福感！',
+                description: '濃郁的草莓風味，中心填入滑順不膩口的卡士達內餡，帶來滿滿幸福感！',
                 id: '-L9tH8jxVb2Ka_DYPwng',
                 is_enabled: 1,
                 origin_price: 150,
@@ -148,8 +133,7 @@
               {
                 category: '蛋糕',
                 content: '尺寸：6寸',
-                description:
-                  '蜜蜂蜜蛋糕，夾層夾上酸酸甜甜的檸檬餡，清爽可口的滋味讓人口水直流！',
+                description: '蜜蜂蜜蛋糕，夾層夾上酸酸甜甜的檸檬餡，清爽可口的滋味讓人口水直流！',
                 id: '-McJ-VvcwfN1_Ye_NtVA',
                 is_enabled: 16,
                 origin_price: 1000,
@@ -192,6 +176,13 @@
               }
             });
           },
+        },
+        mounted() {},
+        created() {
+          if (!token) {
+            alert('請先登入');
+            window.location.assign('/login.html');
+          }
         },
       };
 
