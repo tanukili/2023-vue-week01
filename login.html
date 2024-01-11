@@ -60,7 +60,6 @@
     <script type="module">
       const { createApp } = Vue;
       const url = 'https://vue3-course-api.hexschool.io/v2';
-      const path = '2023-vue';
 
       const app = createApp({
         data() {
@@ -79,7 +78,6 @@
                 alert(res.data.message);
                 // 儲存登入狀態
                 const { token, expired } = res.data;
-                console.log(token, new Date(expired));
                 document.cookie = `adminToken=${token}; expires=${new Date(expired)};`;
                 window.location.assign('/products.html');
               })
