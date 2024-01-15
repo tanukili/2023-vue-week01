@@ -95,7 +95,9 @@
         <div class="modal-dialog modal-xl">
           <div class="modal-content">
             <div class="modal-header bg-dark">
-              <h3 class="modal-title fs-5 text-white" id="productModal">新增/編輯產品</h3>
+              <h3 class="modal-title fs-5 text-white" id="productModal">
+                {{ `${ temp.id ? '編輯' : '新增' }產品` }}
+              </h3>
             </div>
             <div class="modal-body">
               <!-- modal 中使用網格 -->
@@ -105,32 +107,70 @@
                     <div class="mb-3">
                       <label for="mainImg" class="form-label">主要圖片</label>
                       <input
-                        type="url"
+                        type="text"
                         id="mainImg"
                         class="form-control"
                         placeholder="請輸入圖片連結"
+                        v-model.lazy="temp.imageUrl"
                       />
-                      <img src="" alt="" class="img-fluid" />
+                      <img
+                        v-show="temp.imageUrl"
+                        :src="temp.imageUrl"
+                        alt="主要圖片"
+                        class="img-fluid mt-2"
+                      />
                     </div>
                     <h4 class="fs-3 mb-3">多圖新增</h4>
-                    <div class="mb-3">
-                      <label for="otherImg01" class="form-label">圖片網址</label>
-                      <input
-                        type="url"
-                        id="otherImg01"
-                        class="form-control"
-                        placeholder="請輸入圖片連結"
-                      />
-                      <img src="" alt="" class="img-fluid" />
-                    </div>
-                    <button type="button" class="btn btn-outline-primary btn-sm w-100">
+                    <template v-if="temp.imagesUrl.length">
+                      <div
+                        class="mb-3"
+                        v-for="(img, index) in temp.imagesUrl"
+                        :key="`${img}${index}`"
+                      >
+                        <label for="otherImg01" class="form-label">圖片網址</label>
+                        <!-- 迴圈中依索引值賦予 v-model 更動數值 -->
+                        <input
+                          type="text"
+                          id="otherImg01"
+                          class="form-control"
+                          placeholder="請輸入圖片連結"
+                          v-model="temp.imagesUrl[index]"
+                        />
+                        <img
+                          v-show="img"
+                          :src="img"
+                          :alt="`新增圖片${index+1}`"
+                          class="img-fluid mt-2"
+                        />
+                      </div>
+                    </template>
+                    <button
+                      v-if="!temp.imagesUrl.length || temp.imagesUrl.at(-1)"
+                      type="button"
+                      class="btn btn-outline-primary btn-sm w-100"
+                      @click="addImage"
+                    >
                       新增圖片
+                    </button>
+                    <button
+                      v-if="temp.imagesUrl.length && !temp.imagesUrl.at(-1)"
+                      type="button"
+                      class="btn btn-outline-danger btn-sm w-100"
+                      @click="delImage"
+                    >
+                      刪除圖片
                     </button>
                   </div>
                   <div class="col-sm-8">
                     <div class="mb-3">
                       <label for="title" class="form-label">標題</label>
-                      <input type="text" id="title" class="form-control" placeholder="請輸入標題" />
+                      <input
+                        type="text"
+                        id="title"
+                        class="form-control"
+                        placeholder="請輸入標題"
+                        v-model="temp.title"
+                      />
                     </div>
                     <div class="row">
                       <div class="col-md mb-3">
@@ -140,6 +180,7 @@
                           id="category"
                           class="form-control"
                           placeholder="請輸入分類"
+                          v-model="temp.category"
                         />
                       </div>
                       <div class="col-md mb-3">
@@ -149,6 +190,7 @@
                           id="unit"
                           class="form-control"
                           placeholder="請輸入單位"
+                          v-model="temp.unit"
                         />
                       </div>
                     </div>
@@ -160,6 +202,7 @@
                           id="origin_price"
                           class="form-control"
                           placeholder="請輸入原價"
+                          v-model="temp.origin_price"
                         />
                       </div>
                       <div class="col-md mb-3">
@@ -169,6 +212,7 @@
                           id="price"
                           class="form-control"
                           placeholder="請輸入售價"
+                          v-model="temp.price"
                         />
                       </div>
                     </div>
@@ -179,6 +223,7 @@
                         id="description"
                         class="form-control"
                         placeholder="請輸入產品描述"
+                        v-model="temp.description"
                       ></textarea>
                     </div>
                     <div class="mb-3">
@@ -187,10 +232,18 @@
                         id="content"
                         class="form-control"
                         placeholder="請輸入說明內容"
+                        v-model="temp.content"
                       ></textarea>
                     </div>
                     <div class="form-check">
-                      <input type="checkbox" id="is_enabled" class="form-check-input" />
+                      <input
+                        type="checkbox"
+                        id="is_enabled"
+                        class="form-check-input"
+                        v-model="temp.is_enabled"
+                        true-value="1"
+                        false-value="0"
+                      />
                       <label for="is_enabled" class="form-check-label">是否啟用</label>
                     </div>
                   </div>
@@ -201,7 +254,9 @@
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-primary">確認</button>
+              <button type="button" class="btn btn-primary" @click="editProduct(temp.id)">
+                確認
+              </button>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 const url = 'https://vue3-course-api.hexschool.io/v2';
 const path = '2023-vue';
 const token = document.cookie.replace(/(?:(?:^|.*;\s*)adminToken\s*\=\s*([^;]*).*$)|^.*$/, '$1');
+
 // 預設帶入驗證資訊
 axios.defaults.headers.common['Authorization'] = token;
 
@@ -11,22 +12,18 @@ const app = {
   data() {
     return {
       temp: {
-        category: '甜甜圈',
-        content: '尺寸：14x14cm',
-        description: '濃郁的草莓風味，中心填入滑順不膩口的卡士達內餡，帶來滿滿幸福感！',
-        id: '-Nnrgq4Ww5y9wdiUTMS5',
-        imageUrl:
-          'https://images.unsplash.com/photo-1583182332473-b31ba08929c8?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NzR8fGRvbnV0fGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60',
-        imagesUrl: [
-          'https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2832&q=80',
-          'https://images.unsplash.com/photo-1559656914-a30970c1affd?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTY0fHxkb251dHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=700&q=60',
-        ],
-        is_enabled: 1,
-        origin_price: 150,
-        price: 99,
-        title: '草莓莓果夾心圈',
-        unit: '個',
+        category: '',
+        content: '',
+        description: '',
+        imageUrl: '',
+        imagesUrl: [],
+        is_enabled: 0,
+        origin_price: 0,
+        price: 0,
+        title: '',
+        unit: '',
       },
+      modal: '',
       products: [],
     };
   },
@@ -36,22 +33,51 @@ const app = {
         .get(`${url}/api/${path}/admin/products/all`)
         .then(res => {
           this.products = Object.values(res.data.products);
-          console.log(this.products);
         })
         .catch(err => {
           alert(err.response.data.message);
         });
     },
-    showDetail(id) {
-      this.products.forEach(ele => {
-        if (ele.id === id) {
-          this.temp = ele;
-        }
-      });
+    // showDetail(id) {
+    //   this.products.forEach(ele => {
+    //     if (ele.id === id) {
+    //       this.temp = ele;
+    //     }
+    //   });
+    // },
+    // 新增 / 編輯
+    editProduct(id = '') {
+      const method = 'post';
+      if (id) {
+        method = 'put';
+      }
+      console.log(method);
+      const obj = { data: { ...this.temp } };
+      console.log(obj);
+
+      axios[method](`${url}/api/${path}/admin/product`, obj)
+        .then(res => {
+          alert(res.data.message);
+          this.modal.hide();
+          // 將資料初始化：參考文章 - Vue.js 重設或還原 data 初始值的小技巧
+          this.temp = this.$options.data().temp;
+          this.getProducts();
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+        });
+    },
+    addImage() {
+      this.temp.imagesUrl.push('');
+    },
+    delImage() {
+      this.temp.imagesUrl.pop();
     },
   },
   mounted() {
     this.getProducts();
+    // 取得 modal 物件（為了手動操作）
+    this.modal = new bootstrap.Modal(document.getElementById('productModal'));
   },
   created() {
     if (!token) {
