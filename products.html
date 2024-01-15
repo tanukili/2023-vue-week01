@@ -20,72 +20,218 @@
         object-fit: contain;
         max-width: 100%;
       }
+      .modal-content {
+        border-radius: 0.5rem;
+      }
+      .modal-header {
+        border-top-left-radius: calc(0.5rem - 1px);
+        border-top-right-radius: calc(0.5rem - 1px);
+      }
     </style>
 
     <!-- HTML -->
     <div id="app">
-      <div class="container my-3">
-        <div class="row">
-          <div class="col-md">
-            <h2>產品列表</h2>
-            <table class="table table-hover table-borderless mt-4 mb-3">
-              <thead>
-                <tr class="border-bottom">
-                  <th scope="col">產品名稱</th>
-                  <th scope="col">原價</th>
-                  <th scope="col">售價</th>
-                  <th scope="col">是否啟用</th>
-                  <th scope="col">查看細節</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-bottom" v-for="product in products" :key="product.id">
-                  <th scope="row">
-                    <h3 class="fs-6 fw-normal lh-base">{{ product.title }}</h3>
-                  </th>
-                  <td>{{ product.origin_price }}</td>
-                  <td>{{ product.price }}</td>
-                  <td>
-                    <span
-                      :class="{'text-success': product.is_enabled, 'text-danger' : !product.is_enabled }"
-                      >{{ product.is_enabled ? '啟用' : '未啟用' }}</span
-                    >
-                  </td>
-                  <td>
-                    <button class="btn btn-primary" type="button" @click="showDetail(product.id)">
-                      查看細節
+      <div class="container-md">
+        <div class="text-end mt-4">
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#productModal"
+          >
+            建立新的產品
+          </button>
+        </div>
+        <table class="table table-borderless mt-4 mb-3">
+          <thead>
+            <tr class="border-bottom">
+              <th width="100">分類</th>
+              <th>產品名稱</th>
+              <th width="100">原價</th>
+              <th width="100">售價</th>
+              <th width="100">是否啟用</th>
+              <th width="140">編輯</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-bottom" v-for="product in products" :key="product.id">
+              <th scope="row">
+                <h3 class="fs-6 fw-normal lh-base">{{ product.category }}</h3>
+              </th>
+              <td>{{ product.title }}</td>
+              <td class="text-end">{{ product.origin_price }}</td>
+              <td class="text-end">{{ product.price }}</td>
+              <td>
+                <span
+                  :class="{'text-success': product.is_enabled, 'text-danger' : !product.is_enabled }"
+                  >{{ product.is_enabled ? '啟用' : '未啟用' }}</span
+                >
+              </td>
+              <td class="btn-group" role="group">
+                <button
+                  class="btn btn-outline-primary"
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#productModal"
+                >
+                  編輯
+                </button>
+                <button
+                  class="btn btn-outline-danger"
+                  type="button"
+                  data-bs-toggle="modal"
+                  data-bs-target="#delModal"
+                >
+                  刪除
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 新增／編輯 Modal -->
+      <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header bg-dark">
+              <h3 class="modal-title fs-5 text-white" id="productModal">新增/編輯產品</h3>
+            </div>
+            <div class="modal-body">
+              <!-- modal 中使用網格 -->
+              <div class="container-fluid">
+                <form class="row">
+                  <div class="col-sm-4">
+                    <div class="mb-3">
+                      <label for="mainImg" class="form-label">主要圖片</label>
+                      <input
+                        type="url"
+                        id="mainImg"
+                        class="form-control"
+                        placeholder="請輸入圖片連結"
+                      />
+                      <img src="" alt="" class="img-fluid" />
+                    </div>
+                    <h4 class="fs-3 mb-3">多圖新增</h4>
+                    <div class="mb-3">
+                      <label for="otherImg01" class="form-label">圖片網址</label>
+                      <input
+                        type="url"
+                        id="otherImg01"
+                        class="form-control"
+                        placeholder="請輸入圖片連結"
+                      />
+                      <img src="" alt="" class="img-fluid" />
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm w-100">
+                      新增圖片
                     </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p>目前有 {{ products.length }} 項產品</p>
-          </div>
-          <div class="col-md">
-            <h2>單一產品細節</h2>
-            <div v-if="temp">
-              <div class="card mb-3">
-                <img :src="temp.imageUrl" :alt="temp.title" style="height: 300px" />
-                <div class="card-body">
-                  <h3 class="card-title fs-5">
-                    {{ temp.title }}<span class="badge bg-primary ms-2">{{ temp.category }}</span>
-                  </h3>
-                  <p class="card-text">商品描述：{{ temp.description }}</p>
-                  <p class="card-text me-2">商品內容：{{ temp.content }}</p>
-                  <!-- 可以使用 del 標籤 -->
-                  <p class="card-text">
-                    <span class="me-2">{{ temp.price }}</span
-                    ><del class="text-secondary">{{ temp.origin_price }}</del>元 / 個
-                  </p>
-                </div>
-              </div>
-              <div class="d-flex flex-wrap">
-                <span class="m-2" v-for="(img, i) in temp.imagesUrl" :key="i">
-                  <img :src="img" style="height: 150px" :alt="`${temp.title}0${i+1}`" />
-                </span>
+                  </div>
+                  <div class="col-sm-8">
+                    <div class="mb-3">
+                      <label for="title" class="form-label">標題</label>
+                      <input type="text" id="title" class="form-control" placeholder="請輸入標題" />
+                    </div>
+                    <div class="row">
+                      <div class="col-md mb-3">
+                        <label for="category" class="form-label">分類</label>
+                        <input
+                          type="text"
+                          id="category"
+                          class="form-control"
+                          placeholder="請輸入分類"
+                        />
+                      </div>
+                      <div class="col-md mb-3">
+                        <label for="unit" class="form-label">單位</label>
+                        <input
+                          type="text"
+                          id="unit"
+                          class="form-control"
+                          placeholder="請輸入單位"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md mb-3">
+                        <label for="origin_price" class="form-label">原價</label>
+                        <input
+                          type="number"
+                          id="origin_price"
+                          class="form-control"
+                          placeholder="請輸入原價"
+                        />
+                      </div>
+                      <div class="col-md mb-3">
+                        <label for="price" class="form-label">售價</label>
+                        <input
+                          type="number"
+                          id="price"
+                          class="form-control"
+                          placeholder="請輸入售價"
+                        />
+                      </div>
+                    </div>
+                    <hr />
+                    <div class="mb-3">
+                      <label for="description" class="form-label">產品描述</label>
+                      <textarea
+                        id="description"
+                        class="form-control"
+                        placeholder="請輸入產品描述"
+                      ></textarea>
+                    </div>
+                    <div class="mb-3">
+                      <label for="content" class="form-label">說明內容</label>
+                      <textarea
+                        id="content"
+                        class="form-control"
+                        placeholder="請輸入說明內容"
+                      ></textarea>
+                    </div>
+                    <div class="form-check">
+                      <input type="checkbox" id="is_enabled" class="form-check-input" />
+                      <label for="is_enabled" class="form-check-label">是否啟用</label>
+                    </div>
+                  </div>
+                </form>
               </div>
             </div>
-            <p class="text-secondary" v-else>請選擇一個商品查看</p>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                取消
+              </button>
+              <button type="button" class="btn btn-primary">確認</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 刪除 Modal -->
+      <div class="modal fade" id="delModal" tabindex="-1">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header bg-danger">
+              <h5 class="modal-title text-white">刪除產品</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">
+                是否刪除
+                <span class="text-danger fw-bold">草莓莓果夾心圈</span> 商品(刪除後將無法恢復)。
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                取消
+              </button>
+              <button type="button" class="btn btn-danger">確認刪除</button>
+            </div>
           </div>
         </div>
       </div>
@@ -98,58 +244,6 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
 
-    <!-- JS -->
-    <script type="module">
-      // 載入方式：ESM
-      import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
-
-      const url = 'https://vue3-course-api.hexschool.io/v2';
-      const path = '2023-vue';
-      const token = document.cookie.replace(
-        /(?:(?:^|.*;\s*)adminToken\s*\=\s*([^;]*).*$)|^.*$/,
-        '$1'
-      );
-      // 預設帶入驗證資訊
-      axios.defaults.headers.common['Authorization'] = token;
-
-      const app = {
-        data() {
-          return {
-            temp: null,
-            products: [],
-          };
-        },
-        methods: {
-          getProducts() {
-            axios
-              .get(`${url}/api/${path}/admin/products/all`)
-              .then(res => {
-                this.products = Object.values(res.data.products);
-              })
-              .catch(err => {
-                alert(err.response.data.message);
-              });
-          },
-          showDetail(id) {
-            this.products.forEach(ele => {
-              if (ele.id === id) {
-                this.temp = ele;
-              }
-            });
-          },
-        },
-        mounted() {
-          this.getProducts();
-        },
-        created() {
-          if (!token) {
-            alert('請先登入');
-            window.location = 'login.html';
-          }
-        },
-      };
-
-      createApp(app).mount('#app');
-    </script>
+    <script src="./products.js" type="module"></script>
   </body>
 </html>
