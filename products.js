@@ -3,10 +3,6 @@ import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
 const url = 'https://vue3-course-api.hexschool.io/v2';
 const path = '2023-vue';
-const token = document.cookie.replace(/(?:(?:^|.*;\s*)adminToken\s*\=\s*([^;]*).*$)|^.*$/, '$1');
-
-// 預設帶入驗證資訊
-axios.defaults.headers.common['Authorization'] = token;
 
 const app = {
   data() {
@@ -28,6 +24,17 @@ const app = {
     };
   },
   methods: {
+    checkLogin() {
+      axios
+        .post(`${url}/api/user/check`)
+        .then(() => {
+          this.getProducts();
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+          window.location = 'login.html';
+        });
+    },
     getProducts() {
       axios
         .get(`${url}/api/${path}/admin/products/all`)
@@ -75,15 +82,16 @@ const app = {
     },
   },
   mounted() {
-    this.getProducts();
+    const token = document.cookie.replace(
+      /(?:(?:^|.*;\s*)adminToken\s*\=\s*([^;]*).*$)|^.*$/,
+      '$1'
+    );
+    // 預設帶入驗證資訊
+    axios.defaults.headers.common['Authorization'] = token;
+    this.checkLogin(token);
+
     // 取得 modal 物件（為了手動操作）
     this.modal = new bootstrap.Modal(document.getElementById('productModal'));
-  },
-  created() {
-    if (!token) {
-      alert('請先登入');
-      window.location = 'login.html';
-    }
   },
 };
 
