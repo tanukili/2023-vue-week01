@@ -19,7 +19,8 @@ const app = {
         title: '',
         unit: '',
       },
-      modal: '',
+      productModal: '',
+      delModal: '',
       products: [],
     };
   },
@@ -45,29 +46,20 @@ const app = {
           alert(err.response.data.message);
         });
     },
-    // showDetail(id) {
-    //   this.products.forEach(ele => {
-    //     if (ele.id === id) {
-    //       this.temp = ele;
-    //     }
-    //   });
-    // },
     // 新增 / 編輯
     editProduct(id = '') {
-      const method = 'post';
+      let method = 'post';
+      let apiPath = `${url}/api/${path}/admin/product`;
       if (id) {
         method = 'put';
+        apiPath = `${apiPath}/${id}`;
       }
-      console.log(method);
       const obj = { data: { ...this.temp } };
-      console.log(obj);
 
-      axios[method](`${url}/api/${path}/admin/product`, obj)
+      axios[method](`${apiPath}`, obj)
         .then(res => {
           alert(res.data.message);
-          this.modal.hide();
-          // 將資料初始化：參考文章 - Vue.js 重設或還原 data 初始值的小技巧
-          this.temp = this.$options.data().temp;
+          this.resetModal('productModal');
           this.getProducts();
         })
         .catch(err => {
@@ -80,6 +72,29 @@ const app = {
     delImage() {
       this.temp.imagesUrl.pop();
     },
+    getSpecificProduct(id) {
+      const product = this.products.find(ele => ele.id === id);
+      Object.keys(product).forEach(ele => {
+        this.temp[ele] = product[ele];
+      });
+    },
+    delProduct(id) {
+      axios
+        .delete(`${url}/api/${path}/admin/product/${id}`)
+        .then(res => {
+          alert(res.data.message);
+          this.resetModal('delModal');
+          this.getProducts();
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+        });
+    },
+    resetModal(name) {
+      this[name].hide();
+      // 將資料初始化：參考文章 - Vue.js 重設或還原 data 初始值的小技巧
+      this.temp = this.$options.data().temp;
+    },
   },
   mounted() {
     const token = document.cookie.replace(
@@ -91,7 +106,8 @@ const app = {
     this.checkLogin(token);
 
     // 取得 modal 物件（為了手動操作）
-    this.modal = new bootstrap.Modal(document.getElementById('productModal'));
+    this.productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    this.delModal = new bootstrap.Modal(document.getElementById('delModal'));
   },
 };
 

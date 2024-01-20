@@ -38,6 +38,7 @@
             class="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#productModal"
+            @click="temp = $options.data().temp;"
           >
             建立新的產品
           </button>
@@ -73,6 +74,7 @@
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target="#productModal"
+                  @click="getSpecificProduct(product.id)"
                 >
                   編輯
                 </button>
@@ -81,6 +83,7 @@
                   type="button"
                   data-bs-toggle="modal"
                   data-bs-target="#delModal"
+                  @click="getSpecificProduct(product.id)"
                 >
                   刪除
                 </button>
@@ -121,7 +124,7 @@
                       />
                     </div>
                     <h4 class="fs-3 mb-3">多圖新增</h4>
-                    <template v-if="temp.imagesUrl.length">
+                    <template v-if="temp.imagesUrl">
                       <div
                         class="mb-3"
                         v-for="(img, index) in temp.imagesUrl"
@@ -145,7 +148,7 @@
                       </div>
                     </template>
                     <button
-                      v-if="!temp.imagesUrl.length || temp.imagesUrl.at(-1)"
+                      v-show="!temp.imagesUrl.length || temp.imagesUrl.at(-1)"
                       type="button"
                       class="btn btn-outline-primary btn-sm w-100"
                       @click="addImage"
@@ -153,7 +156,7 @@
                       新增圖片
                     </button>
                     <button
-                      v-if="temp.imagesUrl.length && !temp.imagesUrl.at(-1)"
+                      v-show="temp.imagesUrl.length && !temp.imagesUrl.at(-1)"
                       type="button"
                       class="btn btn-outline-danger btn-sm w-100"
                       @click="delImage"
@@ -278,14 +281,16 @@
             <div class="modal-body">
               <p class="mb-0">
                 是否刪除
-                <span class="text-danger fw-bold">草莓莓果夾心圈</span> 商品(刪除後將無法恢復)。
+                <span class="text-danger fw-bold">{{ temp.title }}</span> 商品(刪除後將無法恢復)。
               </p>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                 取消
               </button>
-              <button type="button" class="btn btn-danger">確認刪除</button>
+              <button type="button" class="btn btn-danger" @click="delProduct(temp.id)">
+                確認刪除
+              </button>
             </div>
           </div>
         </div>
