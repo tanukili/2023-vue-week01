@@ -1,9 +1,12 @@
 // 載入方式：ESM
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
+// 產品 modal 元件
+import productModal from './components/ProductModal.js';
 
 const url = 'https://vue3-course-api.hexschool.io/v2';
 const path = '2023-vue';
 
+// 分頁元件
 const pagination = {
   props: ['pagination', 'getProducts'],
   template: `<nav aria-label="Page navigation">
@@ -24,10 +27,17 @@ const pagination = {
     </ul>
   </nav>`,
 };
+// 刪除 modal 元件
+const delModal = {
+  props: ['title', 'id', 'delProduct'],
+  template: '#delModalComponent',
+};
 
 const app = {
   components: {
     pagination,
+    delModal,
+    productModal,
   },
   data() {
     return {
@@ -42,6 +52,7 @@ const app = {
         price: 0,
         title: '',
         unit: '',
+        id: '',
       },
       productModal: '',
       delModal: '',
@@ -91,12 +102,6 @@ const app = {
         .catch(err => {
           alert(err.response.data.message);
         });
-    },
-    addImage() {
-      this.temp.imagesUrl.push('');
-    },
-    delImage() {
-      this.temp.imagesUrl.pop();
     },
     getSpecificProduct(id) {
       const product = this.products.find(ele => ele.id === id);
