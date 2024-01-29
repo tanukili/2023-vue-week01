@@ -91,6 +91,7 @@
             </tr>
           </tbody>
         </table>
+        <pagination :pagination="pagination" :get-products="getProducts"></pagination>
       </div>
 
       <!-- 新增／編輯 Modal -->
@@ -205,7 +206,8 @@
                           id="origin_price"
                           class="form-control"
                           placeholder="請輸入原價"
-                          v-model="temp.origin_price"
+                          v-model.number="temp.origin_price"
+                          min="0"
                         />
                       </div>
                       <div class="col-md mb-3">
@@ -215,7 +217,8 @@
                           id="price"
                           class="form-control"
                           placeholder="請輸入售價"
-                          v-model="temp.price"
+                          v-model.number="temp.price"
+                          min="0"
                         />
                       </div>
                     </div>

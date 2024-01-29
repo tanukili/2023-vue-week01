@@ -4,7 +4,31 @@ import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 const url = 'https://vue3-course-api.hexschool.io/v2';
 const path = '2023-vue';
 
+const pagination = {
+  props: ['pagination', 'getProducts'],
+  template: `<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" :class="{disabled: !pagination.has_pre}">
+        <a class="page-link" href="#" aria-label="Previous" @click.prevent="getProducts(pagination.current_page - 1)">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item" v-for="page in pagination.total_pages" :key="page" :class="{active : pagination.current_page === page}">
+        <a class="page-link" href="#" @click.prevent="getProducts(page)">{{ page }}</a>
+      </li>
+      <li class="page-item" :class="{disabled: !pagination.has_next}">
+        <a class="page-link" href="#" aria-label="Next" @click.prevent="getProducts(pagination.current_page + 1)">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>`,
+};
+
 const app = {
+  components: {
+    pagination,
+  },
   data() {
     return {
       temp: {
@@ -22,6 +46,7 @@ const app = {
       productModal: '',
       delModal: '',
       products: [],
+      pagination: {},
     };
   },
   methods: {
@@ -36,10 +61,11 @@ const app = {
           window.location = 'login.html';
         });
     },
-    getProducts() {
+    getProducts(page = 1) {
       axios
-        .get(`${url}/api/${path}/admin/products/all`)
+        .get(`${url}/api/${path}/admin/products?page=${page}`)
         .then(res => {
+          this.pagination = res.data.pagination;
           this.products = Object.values(res.data.products);
         })
         .catch(err => {
