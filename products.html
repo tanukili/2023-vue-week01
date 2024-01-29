@@ -38,7 +38,6 @@
             class="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#productModal"
-            @click="temp = $options.data().temp;"
           >
             建立新的產品
           </button>
@@ -94,7 +93,11 @@
         <pagination :pagination="pagination" :get-products="getProducts"></pagination>
       </div>
       <del-Modal :title="temp.title" :id="temp.id" :del-product="delProduct"></del-Modal>
-      <product-Modal :temp="temp" :edit-product="editProduct"></product-Modal>
+      <product-Modal
+        :temp="temp"
+        :edit-product="editProduct"
+        @file-value="getFileValue"
+      ></product-Modal>
     </div>
 
     <!-- 刪除 Modal（x-template） -->

@@ -1,3 +1,6 @@
+const url = 'https://vue3-course-api.hexschool.io/v2';
+const path = '2023-vue';
+
 export default {
   props: ['temp', 'editProduct'],
   template: `<div class="modal fade" id="productModal" tabindex="-1">
@@ -22,6 +25,9 @@ export default {
                     placeholder="請輸入圖片連結"
                     v-model.lazy="temp.imageUrl"
                   />
+                  <div class="input-group my-2">
+                      <input type="file" ref="fileValue" class="form-control"  @change="uploadImage(null, $event)">
+                    </div>
                   <img
                     v-show="temp.imageUrl"
                     :src="temp.imageUrl"
@@ -32,7 +38,7 @@ export default {
                 <h4 class="fs-3 mb-3">多圖新增</h4>
                 <template v-if="temp.imagesUrl">
                   <div
-                    class="mb-3"
+                    class="mb-2"
                     v-for="(img, index) in temp.imagesUrl"
                     :key="index"
                   >
@@ -45,6 +51,9 @@ export default {
                       placeholder="請輸入圖片連結"
                       v-model="temp.imagesUrl[index]"
                     />
+                    <div class="input-group my-2">
+                      <input type="file" class="form-control"  @change="uploadImage(index, $event)">
+                    </div>
                     <img
                       v-show="img"
                       :src="img"
@@ -62,24 +71,35 @@ export default {
                   新增圖片
                 </button>
                 <button
-                  v-show="temp.imagesUrl.length && !temp.imagesUrl.at(-1)"
-                  type="button"
-                  class="btn btn-outline-danger btn-sm w-100"
-                  @click="delImage"
-                >
+                    v-show="temp.imagesUrl.length && !temp.imagesUrl.at(-1)"
+                    type="button"
+                    class="btn btn-outline-danger btn-sm w-100 mt-4"
+                    @click="delImage"
+                  >
                   刪除圖片
                 </button>
               </div>
               <div class="col-sm-8">
-                <div class="mb-3">
-                  <label for="title" class="form-label">標題</label>
-                  <input
-                    type="text"
-                    id="title"
-                    class="form-control"
-                    placeholder="請輸入標題"
-                    v-model="temp.title"
-                  />
+                <div class="row">
+                  <div class="col-md mb-3">
+                    <label for="title" class="form-label">標題</label>
+                    <input
+                      type="text"
+                      id="title"
+                      class="form-control"
+                      placeholder="請輸入標題"
+                      v-model="temp.title"
+                    />
+                  </div>
+                  <div class="col-md mb-3">
+                    <label for="recommendation" class="form-label">熱門度</label>
+                    <select class="form-select form-select-lg mb-3" id="recommendation" v-model="temp.recommendation">
+                      <option value="0" disabled hidden>請選擇熱門度</option>
+                      <option value="1">偏低</option>
+                      <option value="2">普通</option>
+                      <option value="3">銷售前十</option>
+                    </select>
+                  </div>
                 </div>
                 <div class="row">
                   <div class="col-md mb-3">
@@ -172,6 +192,11 @@ export default {
       </div>
     </div>
   </div>`,
+  data() {
+    return {
+      formData: {},
+    };
+  },
   methods: {
     addImage() {
       this.temp.imagesUrl.push('');
@@ -179,6 +204,26 @@ export default {
     delImage() {
       this.temp.imagesUrl.pop();
     },
+    uploadImage(index, event) {
+      const file = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file-to-upload', file);
+      axios
+        .post(`${url}/api/${path}/admin/upload`, formData)
+        .then(res => {
+          index !== null
+            ? (this.temp.imagesUrl[index] = res.data.imageUrl)
+            : (this.temp.imageUrl = res.data.imageUrl);
+        })
+        .catch(err => {
+          alert(err.response.data.message);
+        });
+    },
+    emitFileValue() {
+      this.$emit('fileValue', this.$refs.fileValue);
+    },
+  },
+  mounted() {
+    this.emitFileValue();
   },
 };
-

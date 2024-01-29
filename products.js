@@ -53,9 +53,11 @@ const app = {
         title: '',
         unit: '',
         id: '',
+        recommendation: 0,
       },
       productModal: '',
       delModal: '',
+      fileInput: null,
       products: [],
       pagination: {},
     };
@@ -121,10 +123,16 @@ const app = {
           alert(err.response.data.message);
         });
     },
-    resetModal(name) {
-      this[name].hide();
+    resetModal(name = '') {
+      if (name) {
+        this[name].hide();
+      }
       // 將資料初始化：參考文章 - Vue.js 重設或還原 data 初始值的小技巧
       this.temp = this.$options.data().temp;
+      this.fileInput.value = null;
+    },
+    getFileValue(dom) {
+      this.fileInput = dom;
     },
   },
   mounted() {
@@ -139,6 +147,13 @@ const app = {
     // 取得 modal 物件（為了手動操作）
     this.productModal = new bootstrap.Modal(document.getElementById('productModal'));
     this.delModal = new bootstrap.Modal(document.getElementById('delModal'));
+    // 監聽 modal 隱藏事件
+    this.productModal._element.addEventListener('hidden.bs.modal', () => {
+      this.resetModal();
+    });
+    this.delModal._element.addEventListener('hidden.bs.modal', () => {
+      this.resetModal();
+    });
   },
 };
 
